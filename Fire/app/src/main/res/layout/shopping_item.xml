@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:padding="@dimen/common_16dp">
+
+    <ImageView
+        android:id="@+id/shopping_item_food_picture"
+        android:layout_width="@dimen/common_40dp"
+        android:layout_height="@dimen/common_40dp"
+        android:layout_marginRight="@dimen/common_16dp"
+        android:src="@color/translate_30"/>
+
+    <TextView
+        android:id="@+id/shopping_item_food_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/common_16dp"
+        android:layout_toRightOf="@id/shopping_item_food_picture"/>
+
+    <TextView
+        android:id="@+id/shopping_item_food_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shopping_item_food_name"
+        android:layout_marginBottom="@dimen/common_16dp"
+        android:layout_toRightOf="@id/shopping_item_food_picture"/>
+
+    <Button
+        android:id="@+id/shopping_item_food_minus"
+        android:layout_width="@dimen/common_40dp"
+        android:layout_height="@dimen/common_40dp"
+        android:layout_below="@id/shopping_item_food_price"
+        android:layout_marginLeft="@dimen/common_40dp"
+        android:layout_toRightOf="@id/shopping_item_food_picture"
+        android:background="@drawable/takeout_bg_btn_reduce_pocket_noraml"/>
+
+    <TextView
+        android:id="@+id/shopping_item_food_count"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/common_40dp"
+        android:layout_below="@id/shopping_item_food_price"
+        android:layout_toRightOf="@id/shopping_item_food_minus"
+        android:layout_marginLeft="@dimen/common_16dp"
+        android:gravity="center"
+        android:textColor="@color/translate_40"
+        android:textSize="@dimen/sp_body_14"/>
+
+    <Button
+        android:id="@+id/shopping_item_food_plus"
+        android:layout_width="@dimen/common_40dp"
+        android:layout_height="@dimen/common_40dp"
+        android:layout_below="@id/shopping_item_food_price"
+        android:layout_marginLeft="@dimen/common_16dp"
+        android:layout_toRightOf="@id/shopping_item_food_count"
+        android:background="@drawable/takeout_bg_btn_increase_pocket_focus"/>
+</RelativeLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.sxmbit.fire.activity.RichScanActivity">
+
+    <include
+        layout="@layout/common_toolbar"/>
+
+    <LinearLayout
+        android:id="@+id/rich_scan_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:background="?attr/colorPrimaryDark"
+        android:focusableInTouchMode="true"
+        android:maxHeight="80dp"
+        android:minHeight="40dp"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <android.support.v7.widget.AppCompatEditText
+            android:id="@+id/rich_scan_commont"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/common_8dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:gravity="center_vertical"
+            android:hint="想要说点什么呢?"
+            android:maxHeight="80dp"
+            android:background="@drawable/reply_edittext_bg"
+            android:minHeight="@dimen/common_40dp"
+            android:padding="@dimen/common_8dp"
+            android:textColor="@color/translate_50"
+            android:textColorHint="@color/translate_30"
+            android:textSize="@dimen/sp_body_14"/>
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/rich_scan_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:padding="@dimen/common_2dp"
+            android:background="?attr/colorPrimary"
+            android:paddingLeft="@dimen/common_8dp"
+            android:paddingRight="@dimen/common_8dp"
+            android:text="发送"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/sp_body_14"/>
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatEditText
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="visible"/>
+</RelativeLayout>

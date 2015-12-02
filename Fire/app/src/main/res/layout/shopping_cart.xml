@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <FrameLayout
+        android:id="@+id/shop_cart_frame"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_shop_cart"
+            android:layout_width="@dimen/common_48dp"
+            android:layout_height="@dimen/common_48dp"
+            android:src="@drawable/takeout_ic_shopping_cart_normal"/>
+
+        <com.sxmbit.fire.widget.CircleButton
+            android:id="@+id/txt_food_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/common_16dp"
+            android:minWidth="@dimen/common_16dp"
+            android:layout_gravity="right"
+            app:circlebutton_isfillet="true"
+            app:circlebutton_background_selected="#FFFF0000"
+            app:circlebutton_textColor_selected="@android:color/white"
+            app:circlebutton_gradientDrawable="oval"
+            android:textColor="@android:color/white"
+            android:textSize="10.0sp"/>
+    </FrameLayout>
+
+
+    <ImageView
+        android:id="@+id/img_food_arrow_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/shop_cart_frame"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/takeout_bg_arrow_up"/>
+</RelativeLayout>

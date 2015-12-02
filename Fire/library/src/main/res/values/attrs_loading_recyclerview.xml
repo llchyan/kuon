@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 自定义extendrecyclerview属性-->
+    <declare-styleable name="LoadingRecyclerview">
+
+        <attr name="loadingRcv_loadingView" format="reference" />
+        <attr name="loadingRcv_errorView" format="reference" />
+        <attr name="loadingRcv_emptyView" format="reference" />
+        <attr name="loadingRcv_moreProgress" format="reference"/>
+        <attr name="loadingRcv_contentLayoutId" format="reference"/>
+
+        <attr name="loadingRcv_hasFixedSize" format="boolean"/>
+
+        <attr name="loadingRcv_scrollbarStyle">
+            <flag name="insideOverlay" value="0x0"/>
+            <flag name="insideInset" value="0x01000000"/>
+            <flag name="outsideOverlay" value="0x02000000"/>
+            <flag name="outsideInset" value="0x03000000"/>
+        </attr>
+
+    </declare-styleable>
+</resources>
