@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.sxmbit.fire.activity.ShapeActivity"
+    tools:showIn="@layout/activity_shape">
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_60"
+        app:divider="@drawable/shape_divider"
+        app:showDividers="beginning|middle|end">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#257fe6"
+            android:gravity="center"
+            android:text="默认"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle1"
+            android:gravity="center"
+            android:text="设置内容与形状边界的内间距"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle2"
+            android:gravity="center"
+            android:text="设置形状的渐变颜色"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle3"
+            android:gravity="center"
+            android:text="设置圆角"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle4"
+            android:gravity="center"
+            android:text="设置描边，可描成实线或虚线"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_oval1"
+            android:gravity="center"
+            android:text="oval用来画椭圆"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_oval1"
+            android:gravity="center"
+            android:text="圆"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="@dimen/common_48dp"
+            android:layout_height="@dimen/common_48dp"
+            android:background="@drawable/shape_oval2"
+            android:gravity="center"
+            android:text="圆"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_oval2"
+            android:gravity="center"
+            android:minHeight="@dimen/common_24dp"
+            android:minWidth="@dimen/common_24dp"
+            android:text="oval用来画椭圆"
+            android:textColor="@android:color/white"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_line1"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_line2"
+            android:layerType="software"/>
+
+        <View
+            android:layout_width="@dimen/common_72dp"
+            android:layout_height="@dimen/common_72dp"
+            android:background="@drawable/shape_ring1"/>
+
+        <View
+            android:layout_width="@dimen/common_72dp"
+            android:layout_height="@dimen/common_72dp"
+            android:background="@drawable/shape_ring2"/>
+
+        <View
+            android:layout_width="@dimen/common_72dp"
+            android:layout_height="@dimen/common_72dp"
+            android:background="@drawable/shape_ring3"/>
+
+        <View
+            android:layout_width="@dimen/common_72dp"
+            android:layout_height="@dimen/common_72dp"
+            android:background="@drawable/shape_ring4"/>
+        <View
+            android:layout_width="@dimen/common_72dp"
+            android:layout_height="@dimen/common_72dp"
+            android:background="@drawable/shape_ring5"/>
+    </android.support.v7.widget.LinearLayoutCompat>
+</android.support.v4.widget.NestedScrollView>

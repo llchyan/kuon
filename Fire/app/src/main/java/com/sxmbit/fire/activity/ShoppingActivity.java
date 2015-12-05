@@ -1,11 +1,11 @@
 package com.sxmbit.fire.activity;
 
-import android.content.pm.ActivityInfo;
+import android.database.DataSetObserver;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
+import android.support.v7.internal.widget.ListViewCompat;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,9 +28,9 @@ import android.widget.Toast;
 
 import com.sxmbit.fire.R;
 import com.sxmbit.fire.model.FoodModel;
-import com.sxmbit.fire.utils.KLog;
 import com.sxmbit.fire.widget.ShoppingCartView;
-import com.sxmbit.fire.widget.SyLinearLayoutManager;
+import com.sxmbit.library.loadview.CommonAdapter;
+import com.sxmbit.library.loadview.CommonViewHolder;
 import com.sxmbit.library.loadview.RecyclerGenericityAdapter;
 import com.sxmbit.library.loadview.RecyclerHolder;
 import com.sxmbit.library.stickyrecyclerview.StickyRecyclerHeadersAdapter;
@@ -43,7 +43,10 @@ import java.util.List;
 
 import butterknife.Bind;
 
-public class ShoppingActivity extends BaseActivity implements ShoppingCartView.PlusMinusListener, View.OnClickListener
+/**
+ *
+ */
+public class ShoppingActivity extends BaseActivity
 {
 
     @Bind(R.id.toolbar)
@@ -53,30 +56,216 @@ public class ShoppingActivity extends BaseActivity implements ShoppingCartView.P
     @Bind(R.id.shopping_content_recyclerview)
     RecyclerView mContentRecyclerview;
     @Bind(R.id.shopping_cart_recyclerview)
-    RecyclerView mCartRecyclerview;
+    ListViewCompat mCartRecyclerview;
     @Bind(R.id.shopping_content_shoppingcart)
     ShoppingCartView mShoppingCartView;
 
     @Bind(R.id.shopping_bottom_background)
     Button mBottomBackground;
 
-    ArrayList<String> title = new ArrayList<>();
-    MenuAdapter menuAdapter;
 
     @Bind(R.id.shopping_cart_price)
     TextView mShoppingCartPrice;
     @Bind(R.id.shopping_cart_clearing)
     Button mShoppingCartClearing;
-    @Bind(R.id.shopping_bottom_parent)
-    LinearLayoutCompat mShoppingBottomParent;
-    SyLinearLayoutManager syLinearLayoutManager;
 
-    int dp_16;
-    int dp_80;
-    final AnimalsHeadersAdapter adapter = new AnimalsHeadersAdapter();
-    RecyclerGenericityAdapter<FoodModel> cartAdater;
-    ArrayList<FoodModel> foodList = new ArrayList<>();
-    ArrayList<FoodModel> foodList2 = new ArrayList<>();
+
+    private final AnimalsHeadersAdapter adapter = new AnimalsHeadersAdapter();
+
+
+    private ArrayList<FoodModel> foodList = new ArrayList<>();
+    private ArrayList<FoodModel> foodList2 = new ArrayList<>();
+    private ArrayList<String> title = new ArrayList<>();
+
+    private LinearLayoutManager manager_content;
+
+    private MenuAdapter menuAdapter = new MenuAdapter<String>(title, R.layout.view_item)
+    {
+        @Override
+        public void convert(RecyclerHolder holder, String item, int position)
+        {
+            TextView textView = (TextView) holder.itemView;
+            textView.setText(item);
+            if (mSelect == position)
+            {
+                textView.setBackgroundResource(android.R.color.holo_green_light);  //选中项背景
+                textView.setTextColor(Color.WHITE);
+            } else
+            {
+                textView.setBackgroundResource(android.R.color.white);  //其他项背景
+                textView.setTextColor(color_gray);
+            }
+
+            textView.setOnClickListener(v -> {
+                for (int i = 0, len = adapter.getItemCount(); i < len; i++)
+                {
+                    if (item.equals(adapter.getItem(i).group_name))
+                    {
+                        manager_content.scrollToPositionWithOffset(i, 0);
+                        changeSelected(position);
+                        break;
+                    }
+                }
+            });
+
+        }
+    };
+    /**
+     * 购物车点击事件，以及阴影背景点击事件
+     */
+    private View.OnClickListener cartClickListener = v -> calculationLayout(false);
+
+
+    private ShoppingCartView.PlusMinusListener plusMinusListener = new ShoppingCartView.PlusMinusListener()
+    {
+        /**
+         * 对mShoppingCartView的加一的监听变化
+         * 计算总价，超过配送额，就可以结算了。
+         *
+         * @param afterCount 加完之后的数量
+         */
+        @Override
+        public void plus(int afterCount)
+        {
+            if (afterCount > 0)
+            {
+                mShoppingCartPrice.setTextColor(color_red);
+
+                int totlalmoney = 0;
+                for (FoodModel model : foodList2)
+                {
+                    totlalmoney += model.unit_price * model.score;
+                }
+
+                if (totlalmoney >= 20)
+                {
+                    mShoppingCartClearing.setText("去结算");
+                    mShoppingCartClearing.setTextColor(color_red);
+                } else
+                {
+                    mShoppingCartClearing.setText(String.format("还差¥ %d", 20 - totlalmoney));
+                    mShoppingCartClearing.setTextColor(color_gray);
+
+                }
+                mShoppingCartPrice.setText(String.format("¥ %d", totlalmoney));
+            }
+        }
+
+        /**
+         * 对mShoppingCartView的减一的监听变化
+         * 计算总价，低于配送额，就无法结算了。
+         *
+         * @param afterCount 减完之后的数量
+         */
+        @Override
+        public void minus(int afterCount)
+        {
+            if (afterCount == 0)
+            {
+                mShoppingCartClearing.setTextColor(color_gray);
+                mShoppingCartPrice.setTextColor(color_gray);
+                mShoppingCartClearing.setText(String.format("还差¥ %d", 20));
+                mShoppingCartPrice.setText("购物车空空如也~");
+            } else
+            {
+                int totlalmoney = 0;
+                for (FoodModel model : foodList2)
+                {
+                    totlalmoney += model.unit_price * model.score;
+                }
+
+                if (totlalmoney >= 20)
+                {
+                    mShoppingCartClearing.setText("去结算");
+                    mShoppingCartClearing.setTextColor(color_red);
+                } else
+                {
+                    mShoppingCartClearing.setText(String.format("还差¥ %d", 20 - totlalmoney));
+                    mShoppingCartClearing.setTextColor(color_gray);
+
+                }
+                mShoppingCartPrice.setTextColor(color_red);
+                mShoppingCartPrice.setText(String.format("¥ %d", totlalmoney));
+            }
+        }
+    };
+
+    /**
+     * 购物车清单
+     */
+    private CommonAdapter<FoodModel> cartAdater = new CommonAdapter<FoodModel>(foodList2, R.layout.shopping_item)
+    {
+
+        @Override
+        public void convert(CommonViewHolder holder, int position, FoodModel item)
+        {
+            holder.setVisibility(R.id.shopping_item_food_picture, View.GONE);
+            holder.setVisibility(R.id.shopping_item_food_price, View.GONE);
+            holder.setText(R.id.shopping_item_food_name, item.food_name);
+            if (item.score == 0)
+            {
+                holder.setVisibility(R.id.shopping_item_food_minus, View.GONE);
+            } else
+            {
+                holder.setVisibility(R.id.shopping_item_food_minus, View.VISIBLE);
+                holder.setText(R.id.shopping_item_food_count, String.valueOf(item.score));
+            }
+            holder.setOnClickListener(R.id.shopping_item_food_minus, new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (item.score != 0)
+                    {
+                        item.score--;
+                        if (item.score == 0)
+                        {
+                            int indexOf = foodList2.indexOf(item);
+                            if (ListViewCompat.NO_POSITION != indexOf)
+                            {
+                                foodList2.remove(indexOf);
+                            }
+                            notifyDataSetChanged();
+                            mShoppingCartView.minus();
+                            if (foodList2.isEmpty())
+                            {
+                                calculationLayout(true);
+                            } else if (foodList2.size() < critical_value)
+                            {
+                                setCartVisibility(View.VISIBLE);
+                            }
+                            return;
+                        }
+                        notifyDataSetChanged();
+                        mShoppingCartView.minus();
+                    }
+                }
+            });
+            holder.setOnClickListener(R.id.shopping_item_food_plus, new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (item.score == 0)
+                    {
+                        foodList2.add(item);
+                    }
+                    item.score++;
+                    notifyDataSetChanged();
+                    mShoppingCartView.puls(false);
+                }
+            });
+        }
+    };
+
+    /**
+     * 购物车清单固定高度时要达到的临界值，vs →  footList2.size()
+     */
+    private static final int critical_value = 3;
+    private int dp_16;
+    private int dp_80;
+    private static final int color_red = Color.parseColor("#FFFF0000");
+    private static final int color_gray = Color.parseColor("#43000000");
 
 
     @Override
@@ -119,185 +308,38 @@ public class ShoppingActivity extends BaseActivity implements ShoppingCartView.P
             foodModel.point_praise = 10;
             foodModel.sales_volume = 5;
             foodModel.score = 0;
-            foodModel.unit_price = id;
+            foodModel.unit_price = id + 1;
             foodList.add(foodModel);
         }
         adapter.addAll(foodList);
         mContentRecyclerview.setAdapter(adapter);
-        syLinearLayoutManager = new SyLinearLayoutManager(mContext);
-        mCartRecyclerview.setLayoutManager(syLinearLayoutManager);
 
-        cartAdater = new RecyclerGenericityAdapter<FoodModel>(foodList2, R.layout.shopping_item)
-        {
-            @Override
-            public void convert(RecyclerHolder holder, FoodModel item, int position)
-            {
-                holder.setVisibility(R.id.shopping_item_food_picture, View.GONE);
-                holder.setVisibility(R.id.shopping_item_food_price, View.GONE);
-                holder.setText(R.id.shopping_item_food_name, item.food_name);
-                if (item.score == 0)
-                {
-                    holder.setVisibility(R.id.shopping_item_food_minus, View.GONE);
-                } else
-                {
-                    holder.setVisibility(R.id.shopping_item_food_minus, View.VISIBLE);
-                    holder.setText(R.id.shopping_item_food_count, String.valueOf(item.score));
-                }
-                holder.setOnClickListener(R.id.shopping_item_food_minus, new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        if (item.score != 0)
-                        {
-                            item.score--;
-                            if (item.score == 0)
-                            {
-                                int indexOf = foodList2.indexOf(item);
-                                if (-1 != indexOf)
-                                {
-                                    foodList2.remove(indexOf);
-                                    notifyItemRemoved(indexOf);
-                                } else
-                                {
-                                    notifyItemChanged(position);
-                                }
-                                mShoppingCartView.minus();
-                                if (foodList2.isEmpty())
-                                {
-                                    calculationLayout(false);
-                                }
-                                return;
-                            }
-                            notifyItemChanged(position);
-                        }
-                        mShoppingCartView.minus();
-                    }
-                });
-                holder.setOnClickListener(R.id.shopping_item_food_plus, new View.OnClickListener()
-                {
-                    @Override
-                    public void onClick(View v)
-                    {
-                        if (item.score == 0)
-                        {
-                            foodList2.add(item);
-                        }
-                        item.score++;
-                        notifyItemChanged(position);
-                        mShoppingCartView.puls(false);
-                    }
-                });
-            }
-        };
-        cartAdater.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver()
+        cartAdater.registerDataSetObserver(new DataSetObserver()
         {
             @Override
             public void onChanged()
             {
                 super.onChanged();
-                KLog.i("onChanged");
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onItemRangeChanged(int positionStart, int itemCount)
-            {
-                super.onItemRangeChanged(positionStart, itemCount);
-                KLog.i("onItemRangeChanged 1");
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onItemRangeChanged(int positionStart, int itemCount, Object payload)
-            {
-                super.onItemRangeChanged(positionStart, itemCount, payload);
-                KLog.i("onItemRangeChanged 2");
-                //                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount)
-            {
-                super.onItemRangeInserted(positionStart, itemCount);
-                KLog.i("onItemRangeInserted");
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onItemRangeRemoved(int positionStart, int itemCount)
-            {
-                super.onItemRangeRemoved(positionStart, itemCount);
-                KLog.i("onItemRangeRemoved");
-                adapter.notifyDataSetChanged();
-
-            }
-
-            @Override
-            public void onItemRangeMoved(int fromPosition, int toPosition, int itemCount)
-            {
-                super.onItemRangeMoved(fromPosition, toPosition, itemCount);
-                KLog.i("onItemRangeMoved");
                 adapter.notifyDataSetChanged();
             }
         });
 
         mCartRecyclerview.setAdapter(cartAdater);
         mCartRecyclerview.setVisibility(View.GONE);
-        final LinearLayoutManager manager_content = new LinearLayoutManager(this);
-        mContentRecyclerview.setLayoutManager(manager_content);
+        mContentRecyclerview.setLayoutManager(manager_content = new LinearLayoutManager(this));
         mMenuRecyclerview.setLayoutManager(new LinearLayoutManager(this));
-        mMenuRecyclerview.setAdapter(menuAdapter = new MenuAdapter<String>(title, R.layout.view_item)
-        {
-            @Override
-            public void convert(RecyclerHolder holder, String item, int position)
-            {
-                TextView textView = (TextView) holder.itemView;
-                textView.setText(item);
-                if (mSelect == position)
-                {
-                    textView.setBackgroundResource(android.R.color.holo_green_light);  //选中项背景
-                    textView.setTextColor(getResources().getColor(android.R.color.white));
-                } else
-                {
-                    textView.setBackgroundResource(android.R.color.white);  //其他项背景
-                    textView.setTextColor(getResources().getColor(R.color.translate_30));
-                }
-
-                textView.setOnClickListener(v -> {
-                    for (int i = 0, len = adapter.getItemCount(); i < len; i++)
-                    {
-                        if (item.equals(adapter.getItem(i).group_name))
-                        {
-                            manager_content.scrollToPositionWithOffset(i, 0);
-                            changeSelected(position);
-                            break;
-                        }
-                    }
-                });
-
-            }
-        });
+        mMenuRecyclerview.setAdapter(menuAdapter);
         // Add the sticky headers decoration
         final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(adapter);
         mContentRecyclerview.addItemDecoration(headersDecor);
         // Add decoration for dividers between list items
         mContentRecyclerview.addItemDecoration(new DividerDecoration(this));
         // Add touch listeners
-        StickyRecyclerHeadersTouchListener touchListener =
-                new StickyRecyclerHeadersTouchListener(mContentRecyclerview, headersDecor);
+        StickyRecyclerHeadersTouchListener touchListener =new StickyRecyclerHeadersTouchListener(mContentRecyclerview, headersDecor);
         touchListener.setOnHeaderClickListener(
-                new StickyRecyclerHeadersTouchListener.OnHeaderClickListener()
-                {
-                    @Override
-                    public void onHeaderClick(View header, int position, long headerId)
-                    {
-                        Toast.makeText(ShoppingActivity.this, "Header position: " + position + ", id: " + headerId,
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                (header, position, headerId) -> Toast.makeText(ShoppingActivity.this, "Header position: " + position + ", id: " + headerId,
+                        Toast.LENGTH_SHORT).show());
         mContentRecyclerview.addOnItemTouchListener(touchListener);
-        //        mMenuRecyclerview.setCh
 
         mContentRecyclerview.addOnScrollListener(new RecyclerView.OnScrollListener()
         {
@@ -336,9 +378,9 @@ public class ShoppingActivity extends BaseActivity implements ShoppingCartView.P
             }
         });
 
-        mBottomBackground.setOnClickListener(this);
-        mShoppingCartView.setOnCartClickListener(this);
-        mShoppingCartView.setPlusMinusListener(this);
+        mBottomBackground.setOnClickListener(cartClickListener);
+        mShoppingCartView.setOnCartClickListener(cartClickListener);
+        mShoppingCartView.setPlusMinusListener(plusMinusListener);
     }
 
     private String[] getDummyDataSet()
@@ -346,26 +388,195 @@ public class ShoppingActivity extends BaseActivity implements ShoppingCartView.P
         return getResources().getStringArray(R.array.animals);
     }
 
-    private int getLayoutManagerOrientation(int activityOrientation)
+
+    /**
+     * 计算购物车动态改变的位置,及相应的一系列的变化
+     *
+     * @param isPop false → 当显示清单时，处理清单为空时调用的
+     */
+    private void calculationLayout(boolean isPop)
     {
-        if (activityOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        if (mShoppingCartView.getCount() == 0 && !isPop)
         {
-            return LinearLayoutManager.VERTICAL;
+            return;
+        }
+
+        RelativeLayout.LayoutParams cart_params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+        LinearLayoutCompat.LayoutParams price_arams = (LinearLayoutCompat.LayoutParams) mShoppingCartPrice.getLayoutParams();
+        if (mCartRecyclerview.getVisibility() == View.GONE)
+        {
+            setCartVisibility(View.VISIBLE);
+            cart_params.addRule(RelativeLayout.ABOVE, R.id.shopping_bottom_parent);
+            cart_params.leftMargin = dp_16;
+            mShoppingCartView.setLayoutParams(cart_params);
+            mBottomBackground.setVisibility(View.VISIBLE);
+            price_arams.leftMargin = dp_16;
+            mShoppingCartPrice.setLayoutParams(price_arams);
         } else
         {
-            return LinearLayoutManager.HORIZONTAL;
+            setCartVisibility(View.GONE);
+            cart_params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, R.id.shopping_parent);
+            cart_params.leftMargin = dp_16;
+            cart_params.bottomMargin = dp_16;
+            mShoppingCartView.setLayoutParams(cart_params);
+            mBottomBackground.setVisibility(View.GONE);
+            price_arams.leftMargin = dp_80;
+            mShoppingCartPrice.setLayoutParams(price_arams);
         }
     }
 
 
-    private void calculationMoney()
+    /**
+     * 设置mCartRecyclerview的隐藏显示.
+     * 显示时判断foodList2.size() >= critical_value，为真代表清单已达到临界值，修改为最大高度;flase 修改为动态高度
+     *
+     * @param visibility mCartRecyclerview.setVisibility(visibility)
+     */
+    private void setCartVisibility(int visibility)
     {
+        if (View.VISIBLE == visibility)
+        {
+            LinearLayoutCompat.LayoutParams layoutParams = (LinearLayoutCompat.LayoutParams) mCartRecyclerview.getLayoutParams();
+            if (foodList2.size() >= critical_value)
+            {
+                layoutParams.height = (int) (mScreenHeight * 0.4);
+                mCartRecyclerview.setLayoutParams(layoutParams);
+            } else if (layoutParams.height != LinearLayoutCompat.LayoutParams.WRAP_CONTENT)
+            {
+                layoutParams.height = LinearLayoutCompat.LayoutParams.WRAP_CONTENT;
+                mCartRecyclerview.setLayoutParams(layoutParams);
+            }
+        }
+        mCartRecyclerview.setVisibility(visibility);
+    }
+
+    private class AnimalsHeadersAdapter extends ShoppingAdapter<RecyclerHolder> implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder>
+    {
+        @Override
+        public RecyclerHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.shopping_item, parent, false);
+            return RecyclerHolder.get(view);
+        }
+
+        @Override
+        public void onBindViewHolder(RecyclerHolder holder, int position)
+        {
+            final FoodModel item = getItem(position);
+            holder.setText(R.id.shopping_item_food_name, item.food_name);
+            holder.setText(R.id.shopping_item_food_price, "¥ " + item.unit_price + "/份");
+            if (item.score == 0)
+            {
+                holder.setVisibility(R.id.shopping_item_food_minus, View.GONE);
+            } else
+            {
+                holder.setVisibility(R.id.shopping_item_food_minus, View.VISIBLE);
+                holder.setText(R.id.shopping_item_food_count, String.valueOf(item.score));
+            }
+            holder.setOnClickListener(R.id.shopping_item_food_minus, v -> {
+                //减之前，先判断数量是否为零，不为零就减一
+                if (item.score != 0)
+                {
+                    item.score--;
+                    //减完之后，判断是否为零，为零就从foodList2移除该item
+                    if (item.score == 0)
+                    {
+                        int indexOf = foodList2.indexOf(item);
+                        if (ListViewCompat.NO_POSITION != indexOf)
+                        {
+                            foodList2.remove(indexOf);
+                        }
+                        holder.setVisibility(R.id.shopping_item_food_minus, View.GONE);
+                        mShoppingCartView.minus();
+                        return;
+                    }
+                    holder.setText(R.id.shopping_item_food_count, String.valueOf(item.score));
+                    mShoppingCartView.minus();
+                }
+            });
+            holder.setOnClickListener(R.id.shopping_item_food_plus, v -> {
+                //加之前，先判断数量是否为零，为零就添加到foodList2
+                if (item.score == 0)
+                {
+                    foodList2.add(item);
+                    holder.setVisibility(R.id.shopping_item_food_minus, View.VISIBLE);
+                }
+                int[] startLocation = new int[2];// 一个整型数组，用来存储按钮的在屏幕的X、Y坐标
+                v.getLocationInWindow(startLocation);// 这是获取购买按钮的在屏幕的X、Y坐标（这也是动画开始的坐标）
+                ball = new ImageView(mContext);// buyImg是动画的图片，我的是一个小球（R.drawable.sign）
+                ball.setImageResource(R.drawable.shoppingcart_anim_oval);// 设置buyImg的图片
+                setAnim(ball, startLocation);// 开始执行动画
+                item.score++;
+                holder.setText(R.id.shopping_item_food_count, String.valueOf(item.score));
+                mShoppingCartView.puls(true);
+            });
+        }
+
+        @Override
+        public long getHeaderId(int position)
+        {
+            return getItem(position).group_id;
+        }
+
+
+        @Override
+        public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent)
+        {
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.view_header, parent, false);
+            return new RecyclerView.ViewHolder(view)
+            {
+            };
+        }
+
+        @Override
+        public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position)
+        {
+            TextView textView = (TextView) holder.itemView;
+            textView.setText(getItem(position).group_name);
+            holder.itemView.setBackgroundColor(getRandomColor());
+        }
+
+        private int getRandomColor()
+        {
+            SecureRandom rgen = new SecureRandom();
+            return Color.HSVToColor(0xFF, new float[]{
+                    rgen.nextInt(359), 1, 1
+            });
+        }
 
     }
 
+    private abstract class MenuAdapter<T> extends RecyclerGenericityAdapter<T>
+    {
 
-    private ViewGroup anim_mask_layout;//动画层
-    private int anim_mask_layout_id = Integer.MAX_VALUE / 100;
+        int mSelect = 0;   //选中项
+
+        public MenuAdapter(@NonNull List<T> mDatas, @LayoutRes int layoutId)
+        {
+            super(mDatas, layoutId);
+        }
+
+
+        public void changeSelected(int positon)
+        {
+            final int pre = mSelect;
+            if (positon != mSelect)
+            {
+                mSelect = positon;
+                notifyItemChanged(pre);
+                notifyItemChanged(positon);
+            }
+        }
+    }
+
+
+
+    /*------------------------------------------------我是萌萌的分割线----------------------------------------*/
+
+    //    private static final int anim_mask_layout_id = Integer.MAX_VALUE / 100;
     private ImageView ball;// 小圆点
 
     /**
@@ -379,15 +590,14 @@ public class ShoppingActivity extends BaseActivity implements ShoppingCartView.P
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
         animLayout.setLayoutParams(lp);
-        animLayout.setId(anim_mask_layout_id);
+        //        animLayout.setId(anim_mask_layout_id);
         animLayout.setBackgroundResource(android.R.color.transparent);
         rootView.addView(animLayout);
         return animLayout;
     }
 
 
-    private View addViewToAnimLayout(final ViewGroup parent, final View view,
-                                     int[] location)
+    private View addViewToAnimLayout(final View view, int[] location)
     {
         int x = location[0];
         int y = location[1];
@@ -400,12 +610,11 @@ public class ShoppingActivity extends BaseActivity implements ShoppingCartView.P
         return view;
     }
 
-    private void setAnim(final FoodModel foodModel, final int position, final View v, int[] startLocation)
+    private void setAnim(final View v, int[] startLocation)
     {
-        anim_mask_layout = null;
-        anim_mask_layout = createAnimLayout();
+        ViewGroup anim_mask_layout = createAnimLayout();
         anim_mask_layout.addView(v);//把动画小球添加到动画层
-        final View view = addViewToAnimLayout(anim_mask_layout, v, startLocation);
+        final View view = addViewToAnimLayout(v, startLocation);
         int[] endLocation = new int[2];// 存储动画结束位置的X、Y坐标
         mShoppingCartView.getFood_count().getLocationInWindow(endLocation);// shopCart是那个购物车
 
@@ -449,246 +658,8 @@ public class ShoppingActivity extends BaseActivity implements ShoppingCartView.P
             public void onAnimationEnd(Animation animation)
             {
                 v.setVisibility(View.GONE);
-                foodModel.score++;
-                adapter.notifyItemChanged(position);
-                mShoppingCartView.puls(true);
             }
         });
 
     }
-
-    @Override
-    public void plus(int afterCount)
-    {
-        if (afterCount > 0)
-        {
-            mShoppingCartPrice.setTextColor(getResources().getColor(R.color.red));
-
-            int totlalmoney = 0;
-            for (FoodModel model : foodList2)
-            {
-                totlalmoney += model.unit_price * model.score;
-            }
-
-            if (totlalmoney >= 20)
-            {
-                mShoppingCartClearing.setText("去结算");
-                mShoppingCartClearing.setTextColor(getResources().getColor(R.color.red));
-            } else
-            {
-                mShoppingCartClearing.setText("还差¥ " + (20 - totlalmoney));
-                mShoppingCartClearing.setTextColor(getResources().getColor(R.color.translate_30));
-
-            }
-            mShoppingCartPrice.setText("¥ " + totlalmoney);
-        }
-    }
-
-    @Override
-    public void minus(int afterCount)
-    {
-        if (afterCount == 0)
-        {
-            mShoppingCartClearing.setTextColor(getResources().getColor(R.color.translate_30));
-            mShoppingCartPrice.setTextColor(getResources().getColor(R.color.translate_30));
-            mShoppingCartClearing.setText("还差¥ 20");
-            mShoppingCartPrice.setText("购物车空空如也~");
-        } else
-        {
-            int totlalmoney = 0;
-            for (FoodModel model : foodList2)
-            {
-                totlalmoney += model.unit_price * model.score;
-            }
-
-            if (totlalmoney >= 20)
-            {
-                mShoppingCartClearing.setText("去结算");
-                mShoppingCartClearing.setTextColor(getResources().getColor(R.color.red));
-            } else
-            {
-                mShoppingCartClearing.setText("还差¥ " + (20 - totlalmoney));
-                mShoppingCartClearing.setTextColor(getResources().getColor(R.color.translate_30));
-
-            }
-            mShoppingCartPrice.setTextColor(getResources().getColor(R.color.red));
-            mShoppingCartPrice.setText("¥ " + totlalmoney);
-        }
-    }
-
-
-    /**
-     * 购物车点击事件，以及阴影背景点击事件
-     */
-    @Override
-    public void onClick(View v)
-    {
-        calculationLayout(true);
-    }
-
-
-    private void calculationLayout(boolean isNotPop)
-    {
-        if (mShoppingCartView.getCount() == 0 && isNotPop)
-        {
-            return;
-        }
-
-        RelativeLayout.LayoutParams cart_params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayoutCompat.LayoutParams price_arams = (LinearLayoutCompat.LayoutParams) mShoppingCartPrice.getLayoutParams();
-        if (mCartRecyclerview.getVisibility() == View.GONE)
-        {
-            cartAdater.notifyDataSetChanged();
-            LinearLayoutCompat.LayoutParams layoutParams = (LinearLayoutCompat.LayoutParams) mCartRecyclerview.getLayoutParams();
-            if (cartAdater.getItemCount() > 2)
-            {
-                layoutParams.height = (int) (mScreenHeight * 0.4);
-            }
-            mCartRecyclerview.setLayoutParams(layoutParams);
-            mCartRecyclerview.setVisibility(View.VISIBLE);
-            cart_params.addRule(RelativeLayout.ABOVE, R.id.shopping_bottom_parent);
-            cart_params.leftMargin = dp_16;
-            mShoppingCartView.setLayoutParams(cart_params);
-            mBottomBackground.setVisibility(View.VISIBLE);
-            price_arams.leftMargin = dp_16;
-            mShoppingCartPrice.setLayoutParams(price_arams);
-        } else
-        {
-            mCartRecyclerview.setVisibility(View.GONE);
-            cart_params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, R.id.shopping_parent);
-            cart_params.leftMargin = dp_16;
-            cart_params.bottomMargin = dp_16;
-            mShoppingCartView.setLayoutParams(cart_params);
-            mBottomBackground.setVisibility(View.GONE);
-            price_arams.leftMargin = dp_80;
-            mShoppingCartPrice.setLayoutParams(price_arams);
-        }
-    }
-
-
-    private class AnimalsHeadersAdapter extends ShoppingAdapter<RecyclerHolder> implements StickyRecyclerHeadersAdapter<RecyclerView.ViewHolder>
-    {
-        @Override
-        public RecyclerHolder onCreateViewHolder(ViewGroup parent, int viewType)
-        {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.shopping_item, parent, false);
-            return RecyclerHolder.get(view);
-        }
-
-        @Override
-        public void onBindViewHolder(RecyclerHolder holder, int position)
-        {
-            final FoodModel item = getItem(position);
-            holder.setText(R.id.shopping_item_food_name, item.food_name);
-            holder.setText(R.id.shopping_item_food_price, "¥ " + item.unit_price + "/份");
-            if (item.score == 0)
-            {
-                holder.setVisibility(R.id.shopping_item_food_minus, View.GONE);
-            } else
-            {
-                holder.setVisibility(R.id.shopping_item_food_minus, View.VISIBLE);
-                holder.setText(R.id.shopping_item_food_count, String.valueOf(item.score));
-            }
-            holder.setOnClickListener(R.id.shopping_item_food_minus, new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    if (item.score != 0)
-                    {
-                        item.score--;
-                        if (item.score == 0)
-                        {
-                            int indexOf = foodList2.indexOf(item);
-                            if (-1 != indexOf)
-                            {
-                                foodList2.remove(indexOf);
-                            }
-                            notifyItemChanged(position);
-                            mShoppingCartView.minus();
-                            return;
-                        }
-                        notifyItemChanged(position);
-                        mShoppingCartView.minus();
-                    }
-                }
-            });
-            holder.setOnClickListener(R.id.shopping_item_food_plus, new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    if (item.score == 0)
-                    {
-                        foodList2.add(item);
-                    }
-                    int[] startLocation = new int[2];// 一个整型数组，用来存储按钮的在屏幕的X、Y坐标
-                    v.getLocationInWindow(startLocation);// 这是获取购买按钮的在屏幕的X、Y坐标（这也是动画开始的坐标）
-                    ball = new ImageView(mContext);// buyImg是动画的图片，我的是一个小球（R.drawable.sign）
-                    ball.setImageResource(R.drawable.shoppingcart_anim_oval);// 设置buyImg的图片
-                    setAnim(item, position, ball, startLocation);// 开始执行动画
-                }
-            });
-        }
-
-        @Override
-        public long getHeaderId(int position)
-        {
-            return getItem(position).group_id;
-        }
-
-
-        @Override
-        public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent)
-        {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_header, parent, false);
-            return new RecyclerView.ViewHolder(view)
-            {
-            };
-        }
-
-        @Override
-        public void onBindHeaderViewHolder(RecyclerView.ViewHolder holder, int position)
-        {
-            TextView textView = (TextView) holder.itemView;
-            textView.setText(getItem(position).group_name);
-            holder.itemView.setBackgroundColor(getRandomColor());
-        }
-
-        private int getRandomColor()
-        {
-            SecureRandom rgen = new SecureRandom();
-            return Color.HSVToColor(0xFF, new float[]{
-                    rgen.nextInt(359), 1, 1
-            });
-        }
-
-    }
-
-    private abstract class MenuAdapter<String> extends RecyclerGenericityAdapter<String>
-    {
-
-        int mSelect = 0;   //选中项
-
-        public MenuAdapter(@NonNull List<String> mDatas, @LayoutRes int layoutId)
-        {
-            super(mDatas, layoutId);
-        }
-
-
-        public void changeSelected(int positon)
-        {
-            final int pre = mSelect;
-            if (positon != mSelect)
-            {
-                mSelect = positon;
-                notifyItemChanged(pre);
-                notifyItemChanged(positon);
-            }
-        }
-    }
-
 }

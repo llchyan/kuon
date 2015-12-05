@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bitmap xmlns:android="http://schemas.android.com/apk/res/android"
+        android:gravity="center"
+        android:src="@drawable/ic_chat_white_24dp"
+        android:tileMode="clamp"
+        android:alpha="1.0"
+        android:antialias="true"
+        android:tint="#92e60c">
+    <!--只能用真实的图片-->
+</bitmap>

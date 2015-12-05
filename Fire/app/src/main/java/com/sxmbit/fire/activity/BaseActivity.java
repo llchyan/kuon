@@ -101,6 +101,7 @@ public abstract class BaseActivity extends AppCompatActivity
         tintManager.setNavigationBarTintEnabled(true);
         tintManager.setStatusBarTintResource(R.color.colorPrimaryDark);
         // set a custom navigation bar resource
+//        tintManager.setNavigationBarTintResource(Color.TRANSPARENT);
         tintManager.setNavigationBarTintResource(R.color.navigationbar_color);
     }
 

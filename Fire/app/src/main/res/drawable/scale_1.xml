@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<scale xmlns:android="http://schemas.android.com/apk/res/android"
+       android:drawable="@drawable/takeout_ic_shopping_cart_normal"
+       android:scaleGravity="right"
+       android:scaleHeight="50%"
+       android:scaleWidth="50%"
+       android:useIntrinsicSizeAsMinimum="false">
+
+</scale>

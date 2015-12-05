@@ -1,5 +1,6 @@
 package com.sxmbit.fire.activity;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v7.app.ActionBar;
@@ -10,7 +11,7 @@ import android.view.MenuItem;
 
 import com.squareup.okhttp.Request;
 import com.sxmbit.fire.R;
-import com.sxmbit.fire.utils.KLog;
+import com.sxmbit.library.KLog;
 import com.zhy.http.okhttp.callback.ResultCallback;
 import com.zhy.http.okhttp.request.OkHttpOrderlyRequest;
 
@@ -44,6 +45,10 @@ public class MainActivity extends BaseActivity
             return;
         actionBar.setTitle("火火火");
         actionBar.setDisplayHomeAsUpEnabled(true);
+//        Intent intent = new Intent(mContext, SelectorActivity.class);
+        Intent intent = new Intent(mContext, ViewAnimationActivity.class);
+        //            Intent intent = new Intent(getContext(), RichScanActivity.class);
+        startActivity(intent);
     }
 
     @Override

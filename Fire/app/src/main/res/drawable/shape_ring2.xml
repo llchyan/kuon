@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:innerRadiusRatio="3"
+       android:shape="ring"
+       android:thicknessRatio="9"
+       android:innerRadius="@dimen/dp_4"
+       android:useLevel="false">
+    <!--android:thickness="@dimen/common_1px"环的厚度 覆盖thicknessRatio比例-->
+
+    <solid
+        android:color="#0b74ec"/>
+
+</shape>

@@ -7,8 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.sxmbit.fire.utils.KLog;
-
 /**
  * Created by LinLin on 2015/11/30.
  */
@@ -110,7 +108,6 @@ public class SyLinearLayoutManager extends LinearLayoutManager
 
     private void measureScrapChild(RecyclerView.Recycler recycler, int position, int widthSpec, int heightSpec, int[] measuredDimension)
     {
-        KLog.i(position);
         View view = recycler.getViewForPosition(position);
 
         // For adding Item Decor Insets to view

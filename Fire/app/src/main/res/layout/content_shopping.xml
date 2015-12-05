@@ -47,7 +47,11 @@
         app:divider="@drawable/shopcart_divider"
         app:showDividers="middle">
 
-        <android.support.v7.widget.RecyclerView
+        <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/shopping_cart_recyclerview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"/>-->
+        <android.support.v7.internal.widget.ListViewCompat
             android:id="@+id/shopping_cart_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

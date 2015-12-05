@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.sxmbit.fire.activity.SelectorActivity"
+    tools:showIn="@layout/activity_selector">
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:descendantFocusability="afterDescendants"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_60"
+        app:divider="@drawable/shape_divider"
+        app:showDividers="beginning|middle|end">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_1"
+            android:gravity="center"
+            android:text="可用状态可用状态，可用状态"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_1"
+            android:enabled="false"
+            android:gravity="center"
+            android:text="不可用状态不可用状态，不可用状态"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_2"
+
+            android:gravity="center"
+            android:text="按压状态按压状态，按压状态"
+            android:textColor="@android:color/white"/>
+
+        <ImageButton
+            android:layout_width="@dimen/common_72dp"
+            android:layout_height="@dimen/common_72dp"
+            android:background="@drawable/selector_2"
+
+            android:gravity="center"
+            android:src="@drawable/takeout_ic_shopping_cart_normal"
+            android:text="按压状态按压状态，按压状态"
+            android:textColor="@android:color/white"/>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_3"
+            android:checked="false"
+            android:enabled="true"
+            android:gravity="center"
+            android:text="勾选状态"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:id="@+id/selector_state_selected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_4"
+            android:checked="false"
+            android:enabled="true"
+            android:gravity="center"
+            android:text="state_selected状态"
+            android:textColor="@android:color/white"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shadow"
+            android:gravity="center"
+            android:padding="@dimen/common_8dp"
+            android:text="shadow状态"
+            android:textColor="@android:color/white"/>
+
+        <ImageView
+            android:layout_width="@dimen/common_40dp"
+            android:layout_height="@dimen/common_40dp"
+            android:gravity="center"
+            android:src="@drawable/bitmap_1"/>
+
+        <ImageView
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:background="@drawable/inset"
+            android:gravity="center"
+            android:src="@drawable/takeout_ic_shopping_cart_normal"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/inset"
+            android:gravity="start"
+            android:text="可用状态InsetDrawable 表示一个drawable嵌入到另外一个drawable内部，并且在内部留一些间距，这一点很像drawable的padding属性，区别在于 padding表示drawable的内容与drawable本身的边距，insetDrawable表示两个drawable和容器之间的边距。当控件需要的背景比实际的边框小的时候比较适合使用InsetDrawable。"
+            android:textColor="@android:color/white"/>
+
+        <ImageView
+            android:id="@+id/selector_clip"
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/clip_1"/>
+
+        <ImageView
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/takeout_ic_shopping_cart_normal"/>
+
+        <ImageView
+            android:id="@+id/selector_scale"
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/scale_1"/>
+
+        <ImageView
+            android:id="@+id/selector_level"
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/level_list1"/>
+
+        <ImageView
+            android:id="@+id/selector_transition"
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/transition_1"/>
+
+        <ImageView
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/rotate_1"/>
+        <ImageView
+            android:id="@+id/selector_animation_list"
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/animation_list_1"/>
+        <ImageView
+            android:layout_width="@dimen/common_56dp"
+            android:layout_height="@dimen/common_56dp"
+            android:gravity="center"
+            android:src="@drawable/animated_rotate1"/>
+    </android.support.v7.widget.LinearLayoutCompat>
+</android.support.v4.widget.NestedScrollView>

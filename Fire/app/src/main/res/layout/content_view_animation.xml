@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.sxmbit.fire.activity.ViewAnimationActivity"
+    tools:showIn="@layout/activity_view_animation">
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        app:divider="@drawable/shape_divider"
+        app:showDividers="beginning|middle|end">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/view_animation_checkbox1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/view_animation_text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_1"
+                android:gravity="center"
+                android:text="渐入渐出"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/view_animation_checkbox2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/view_animation_text2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_1"
+                android:gravity="center"
+                android:text="缩放大小"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:gravity="left"
+            android:orientation="horizontal">
+
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/view_animation_checkbox3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/view_animation_text3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_1"
+                android:gravity="center"
+                android:text="位移动画"
+                android:textColor="@android:color/white"/>
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/view_animation_checkbox4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/view_animation_text4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:background="@drawable/selector_1"
+            android:gravity="center"
+            android:text="旋转动画"
+            android:textColor="@android:color/white"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/view_animation_text5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_1"
+            android:gravity="center"
+            android:text="动画合集"
+            android:textColor="@android:color/white"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/view_animation_text6"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_1"
+            android:gravity="center"
+            android:text="属性动画"
+            android:textColor="@android:color/white"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/view_animation_text7"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_1"
+            android:gravity="center"
+            android:text="属性动画"
+            android:textColor="@android:color/white"/>
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/view_animation_text8"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector_1"
+            android:gravity="center"
+            android:text="属性动画"
+            android:textColor="@android:color/white"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="match_parent"
+            android:layout_height="900dp"/>
+    </android.support.v7.widget.LinearLayoutCompat>
+</android.support.v4.widget.NestedScrollView>
